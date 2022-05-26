@@ -36,12 +36,12 @@ class _RegisterState extends State<Register> {
       if (source.statusCode == 200) {
         if (jsonDecode(source.body)["status"] == 200) {
           setState(() {
+            loginResponse = jsonDecode(source.body)["message"];
+            isLoadding = false;
             nameController.text = "";
             emailController.text = "";
             passwordController.text = "";
             nameController.text = "";
-            loginResponse = jsonDecode(source.body)["message"];
-            isLoadding = false;
           });
         } else if (jsonDecode(source.body)["status"] == 202) {
           setState(() {
