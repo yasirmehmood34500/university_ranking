@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '/Models/university_list_model.dart';
 import '/Providers/university_list_provider.dart';
 import 'package:url_launcher/link.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MeritList extends StatefulWidget {
   final List<MeritResult>? meritResult;
@@ -80,43 +81,53 @@ class MeritListTile extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(style: TextStyle(fontWeight: FontWeight.bold), deptName!),
-              SizedBox(
-                height: 5,
+              Text(
+                style: TextStyle(
+                  fontSize: 12.0,
+                  fontWeight: FontWeight.bold,
+                ),
+                deptName!,
               ),
               Text(
-                style: TextStyle(fontWeight: FontWeight.bold),
-                entryTest! == "1" ? "Yes Entry Test" : "No Entry Test",
-              ),
-              Container(
-                child: Link(
-                  target: LinkTarget.blank,
-                  uri: Uri.parse(lastMeritUrl!),
-                  builder: (context, followLink) => GestureDetector(
-                    onTap: followLink,
-                    child: Container(
-                      padding: EdgeInsets.all(10.0),
-                      child: Text(
-                        "For Merit List",
-                        style: TextStyle(
-                          color: Colors.blue,
-                        ),
-                      ),
-                    ),
-                  ),
+                style: TextStyle(
+                  fontSize: 12.0,
                 ),
+                entryTest! == "1" ? "Yes Entry Test" : "No Entry Test",
               ),
             ],
           ),
           Column(
             children: [
-              Text(lastMerit!,
+              Text("Merit ${lastMerit!}%",
                   style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20.0,
+                    fontSize: 12.0,
                   )),
             ],
           )
+        ],
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Container(
+            child: Link(
+              target: LinkTarget.blank,
+              uri: Uri.parse(lastMeritUrl!),
+              builder: (context, followLink) => GestureDetector(
+                onTap: followLink,
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 5.0),
+                  child: Text(
+                    "For Merit List",
+                    style: TextStyle(
+                      color: Colors.blue,
+                      fontSize: 12.0,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
       Divider(

@@ -1,12 +1,9 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/Components/my_drawer_app.dart';
 import '/Models/university_list_model.dart';
 import '/Providers/university_list_provider.dart';
 import 'package:url_launcher/link.dart';
-
 import 'merit_list.dart';
 
 class UniList extends StatefulWidget {
@@ -37,6 +34,8 @@ class _UniListState extends State<UniList> {
     super.didChangeDependencies();
   }
 
+ 
+
   @override
   Widget build(BuildContext context) {
     List<Result>? universityList =
@@ -66,6 +65,7 @@ class _UniListState extends State<UniList> {
                               universityList[index].requirementLink,
                           index: index,
                           meritResult: universityList[index].meritResult,
+                          worldRanking: universityList[index].worldRanking,
                         );
                       })
                   : Center(
@@ -81,6 +81,7 @@ class UniversityListTile extends StatelessWidget {
   final String? id;
   final String? name;
   final String? ranking;
+  final String? worldRanking;
   final String? registerLink;
   final String? requirementLink;
   final List<MeritResult>? meritResult;
@@ -89,6 +90,7 @@ class UniversityListTile extends StatelessWidget {
     this.id,
     this.name,
     this.ranking,
+    this.worldRanking,
     this.registerLink,
     this.requirementLink,
     this.index,
@@ -97,95 +99,117 @@ class UniversityListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(style: TextStyle(fontWeight: FontWeight.bold), name!),
-              Container(
-                child: Link(
-                  target: LinkTarget.blank,
-                  uri: Uri.parse(registerLink!),
-                  builder: (context, followLink) => GestureDetector(
-                    onTap: followLink,
-                    child: Container(
-                      padding: EdgeInsets.all(10.0),
-                      child: Text(
-                        "For Registration",
-                        style: TextStyle(
-                          color: Colors.blue,
-                        ),
+    return Column(
+      children: [
+        Row(
+          children: [
+            Text(
+              style: const TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: 12.0,
+              ),
+              name!,
+            ),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
+              child: Link(
+                target: LinkTarget.blank,
+                uri: Uri.parse(registerLink!),
+                builder: (context, followLink) => GestureDetector(
+                  onTap: followLink,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 5.0),
+                    child: Text(
+                      "For Registration",
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontSize: 12.0,
                       ),
                     ),
                   ),
                 ),
               ),
-              Container(
-                child: Link(
-                  target: LinkTarget.blank,
-                  uri: Uri.parse(requirementLink!),
-                  builder: (context, followLink) => GestureDetector(
-                    onTap: followLink,
-                    child: Container(
-                      padding: EdgeInsets.all(10.0),
-                      child: Text(
-                        "For Requirement",
-                        style: TextStyle(
-                          color: Colors.blue,
-                        ),
+            ),
+            Container(
+              child: Link(
+                target: LinkTarget.blank,
+                uri: Uri.parse(requirementLink!),
+                builder: (context, followLink) => GestureDetector(
+                  onTap: followLink,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 5.0),
+                    child: Text(
+                      "For Requirement",
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontSize: 12.0,
                       ),
                     ),
                   ),
                 ),
               ),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey,
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                ),
-                padding: EdgeInsets.all(
-                  10,
-                ),
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (BuildContext context) => MeritList(
-                          uniIndex: index,
-                          uniId: id,
-                          meritResult: meritResult,
-                        ),
-                      ),
-                    );
-                  },
-                  child: Text(
-                    "Merit List",
+            ),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              children: [
+                Text("No ${ranking!} in Pakistan",
                     style: TextStyle(
-                      color: Colors.white,
+                      fontSize: 12.0,
+                    )),
+              ],
+            ),
+            Column(
+              children: [
+                Text("No ${worldRanking!} in World",
+                    style: TextStyle(
+                      fontSize: 12.0,
+                    )),
+              ],
+            ),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 5.0),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (BuildContext context) => MeritList(
+                        uniIndex: index,
+                        uniId: id,
+                        meritResult: meritResult,
+                      ),
                     ),
+                  );
+                },
+                child: Text(
+                  "Merit List",
+                  style: TextStyle(
+                    color: Colors.blue,
+                    fontSize: 12.0,
                   ),
                 ),
               ),
-            ],
-          ),
-          Column(
-            children: [
-              Text("R ${ranking!}",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20.0,
-                  )),
-            ],
-          )
-        ],
-      ),
-      Divider(
-        color: Colors.grey,
-      ),
-    ]);
+            ),
+          ],
+        ),
+        Divider(
+          color: Colors.grey,
+        ),
+      ],
+    );
   }
 }
