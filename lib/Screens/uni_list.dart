@@ -15,6 +15,7 @@ class UniList extends StatefulWidget {
 
 class _UniListState extends State<UniList> {
   TextEditingController _searchTextController = TextEditingController();
+  TextEditingController orderByChange = TextEditingController();
   bool dataLoad = false;
 
   List<Result>? universityList = [];
@@ -34,6 +35,7 @@ class _UniListState extends State<UniList> {
 
   @override
   void didChangeDependencies() {
+    orderByChange.text = "All";
     fetchUniversity();
     super.didChangeDependencies();
   }
@@ -55,9 +57,81 @@ class _UniListState extends State<UniList> {
     });
   }
 
+  asc_fun() {
+    var results = Provider.of<UniversityListProvider>(context, listen: false)
+        .getUniversityList()!
+        .sort((a, b) {
+      return a.name
+          .toString()
+          .toLowerCase()
+          .compareTo(b.name.toString().toLowerCase());
+    });
+    return results;
+  }
+
+  desc_fun() {
+    var results = Provider.of<UniversityListProvider>(context, listen: false)
+        .getUniversityList()!
+        .sort((a, b) {
+      return b.name
+          .toString()
+          .toLowerCase()
+          .compareTo(a.name.toString().toLowerCase());
+    });
+    return results;
+  }
+
+  worldRanking_fun() {
+    var results = Provider.of<UniversityListProvider>(context, listen: false)
+        .getUniversityList()!
+        .sort((a, b) {
+      return int.parse(a.worldRanking!).compareTo(int.parse(b.worldRanking!));
+    });
+    return results;
+  }
+
+  pakRanking_fun() {
+    var results = Provider.of<UniversityListProvider>(context, listen: false)
+        .getUniversityList()!
+        .sort((a, b) {
+      return int.parse(a.ranking!).compareTo(int.parse(b.ranking!));
+    });
+    return results;
+  }
+
+  all_fun() {
+    var results = Provider.of<UniversityListProvider>(context, listen: false)
+        .getUniversityList()!;
+  }
+
+  asc_desc_fun(String type) {
+    if (type == "A to Z") {
+      setState(() {
+        universityList = asc_fun();
+      });
+    } else if (type == "Z to A") {
+      setState(() {
+        universityList = desc_fun();
+      });
+    } else if (type == "World Ranking") {
+      setState(() {
+        universityList = worldRanking_fun();
+      });
+    } else if (type == "Pakistan Ranking") {
+      setState(() {
+        universityList = pakRanking_fun();
+      });
+    } else {
+      setState(() {
+        universityList = all_fun();
+      });
+    }
+  }
+
   bool _searchField = false;
   void _searchFiledFun() {
     setState(() {
+      _searchTextController.text = "";
       _searchField = !_searchField;
     });
   }
@@ -89,6 +163,7 @@ class _UniListState extends State<UniList> {
               child: CircularProgressIndicator(),
             )
           : Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 _searchField
                     ? Form(
@@ -133,7 +208,37 @@ class _UniListState extends State<UniList> {
                           ),
                         ),
                       )
-                    : Text(""),
+                    : Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 5.0, vertical: 3.0),
+                        child: DropdownButton<String>(
+                          value: orderByChange.text,
+                          elevation: 16,
+                          style: const TextStyle(color: Colors.deepPurple),
+                          underline: Container(
+                            height: 2,
+                            color: Colors.deepPurpleAccent,
+                          ),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              orderByChange.text = newValue!;
+                              asc_desc_fun(newValue);
+                            });
+                          },
+                          items: <String>[
+                            'All',
+                            'A to Z',
+                            'Z to A',
+                            'World Ranking',
+                            'Pakistan Ranking'
+                          ].map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                        ),
+                      ),
                 Expanded(
                   child: Container(
                     padding: EdgeInsets.all(5.0),
